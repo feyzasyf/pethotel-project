@@ -1,47 +1,73 @@
 "use client";
 
 import { usePetContext } from "@/lib/hooks";
+import { Pet } from "@/lib/types";
 import Image from "next/image";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
 
-  if (!selectedPet) return null;
-
   return (
-    <section className="w-full h-full">
-      {/* Header with pet image and name */}
-      <div className="flex items-center bg-white py-5 px-8 border-b border-gray-200">
-        <Image
-          src={selectedPet.imageUrl}
-          alt="Selected pet image"
-          width={75}
-          height={75}
-          className="w-[75px] h-[75px] rounded-full object-cover"
-        />
-        <h2 className="ml-5 text-3xl font-semibold leading-7">
-          {selectedPet.name}
-        </h2>
-      </div>
-
-      {/* Owner info / Age */}
-      <div className="flex justify-around py-10 px-5 text-center bg-red-500 border">
-        <div>
-          <h3 className="text-xs font-medium uppercase text-gray-700">
-            Owner name
-          </h3>
-          <p className="mt-1 text-lg text-gray-800">{selectedPet.ownerName}</p>
+    <section className="flex flex-col w-full h-full">
+      {!selectedPet ? (
+        <div className="flex h-full justify-center items-center">
+          <EmptyView />
         </div>
-        <div>
-          <h3 className="text-xs font-medium uppercase text-gray-700">Age</h3>
-          <p className="mt-1 text-lg text-gray-800">{selectedPet.age}</p>
-        </div>
-      </div>
+      ) : (
+        <>
+          <TopBar pet={selectedPet} />
+          <OtherInfo pet={selectedPet} />
 
-      {/* Notes section */}
-      <section className="bg-white px-6 py-5 rounded-md mb-9 mx-6 block">
-        {selectedPet.notes}
-      </section>
+          <Notes pet={selectedPet} />
+        </>
+      )}
     </section>
   );
+}
+
+type Props = {
+  pet: Pet;
+};
+function TopBar({ pet }: Props) {
+  return (
+    <div className="flex items-center bg-white py-5 px-8 border-b border-gray-200">
+      <Image
+        src={pet.imageUrl}
+        alt="Selected pet image"
+        width={75}
+        height={75}
+        className="w-[75px] h-[75px] rounded-full object-cover"
+      />
+      <h2 className="ml-5 text-3xl font-semibold leading-7">{pet.name}</h2>
+    </div>
+  );
+}
+
+function OtherInfo({ pet }: Props) {
+  return (
+    <div className="flex justify-around py-10 px-5 text-center">
+      <div>
+        <h3 className="text-xs font-medium uppercase text-gray-700">
+          Owner name
+        </h3>
+        <p className="mt-1 text-lg text-gray-800">{pet.ownerName}</p>
+      </div>
+      <div>
+        <h3 className="text-xs font-medium uppercase text-gray-700">Age</h3>
+        <p className="mt-1 text-lg text-gray-800">{pet.age}</p>
+      </div>
+    </div>
+  );
+}
+
+function Notes({ pet }: Props) {
+  return (
+    <section className="bg-white px-6 py-5 rounded-md mb-9 mx-6 border border-black/8 h-full">
+      {pet.notes}
+    </section>
+  );
+}
+
+function EmptyView() {
+  return <p className="text-2xl font-medium">No pet selected</p>;
 }
