@@ -3,6 +3,7 @@ import AppHeader from "@/components/AppHeader";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import PetContextProvider from "@/contexts/PetContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
+import prisma from "@/lib/prisma";
 import { Pet } from "@/lib/types";
 
 export default async function Layout({
@@ -10,20 +11,14 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const response = await fetch(
-    "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
-  );
-  if (!response.ok) {
-    throw new Error("could not fetch pets");
-  }
-  const data: Pet[] = await response.json();
+  const pets = await prisma.pet.findMany();
   return (
     <>
       <BackgroundPattern />
       <div className="flex flex-col max-w-5xl mx-auto px-4 min-h-screen">
         <AppHeader />
         <SearchContextProvider>
-          <PetContextProvider data={data}>{children}</PetContextProvider>
+          <PetContextProvider data={pets}>{children}</PetContextProvider>
         </SearchContextProvider>
         <AppFooter />
       </div>
