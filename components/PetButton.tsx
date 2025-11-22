@@ -5,6 +5,7 @@ type PetButtonProps = {
   actionType: "add" | "edit" | "checkout";
   children: React.ReactNode;
   className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 type Variant = VariantProps<typeof buttonVariants>["variant"];
@@ -24,6 +25,7 @@ export default function PetButton({
   actionType,
   children,
   className,
+  onClick,
 }: PetButtonProps) {
   const { variant, size } = config[actionType];
   type User = { name: string };
@@ -33,7 +35,12 @@ export default function PetButton({
   const user: User = obj; // ✔ allowed, age is silently dropped
   console.log(user);
   return (
-    <Button variant={variant} size={size} className={className}>
+    <Button
+      variant={variant}
+      size={size}
+      className={className}
+      onClick={onClick}
+    >
       {children}
     </Button>
   );
