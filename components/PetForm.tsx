@@ -9,12 +9,19 @@ import { addPet } from "@/actions";
 export default function PetForm({
   actionType,
   pet,
+  onFormSubmission,
 }: {
   actionType: "add" | "edit";
   pet?: Pet;
+  onFormSubmission: () => void;
 }) {
   return (
-    <form action={addPet}>
+    <form
+      action={async (formData: FormData) => {
+        await addPet(formData);
+        onFormSubmission();
+      }}
+    >
       <div className="grid gap-4">
         <div className="grid gap-3">
           <Label htmlFor="name">Name</Label>

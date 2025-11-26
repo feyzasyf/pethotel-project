@@ -53,7 +53,7 @@ export function AddEditPet({ actionType, pet }: AddEditPetProps) {
         <PetForm
           actionType={actionType}
           pet={pet}
-          //onFormSubmission={handleFormSubmission}
+          onFormSubmission={handleFormSubmission}
         />
       </DialogContent>
     </Dialog>
