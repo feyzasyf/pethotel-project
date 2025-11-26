@@ -2,6 +2,7 @@
 
 import prisma from "./lib/prisma";
 import type { Pet } from "./app/generated/prisma/client";
+import { revalidatePath } from "next/cache";
 
 export type PetInput = Omit<Pet, "id" | "createdAt" | "updatedAt">;
 export async function addPet(formData: FormData): Promise<void> {
@@ -18,6 +19,7 @@ export async function addPet(formData: FormData): Promise<void> {
     await prisma.pet.create({
       data: pet,
     });
+    revalidatePath("/app", "layout");
   } catch (error) {
     throw new Error("Failed to add pet");
   }

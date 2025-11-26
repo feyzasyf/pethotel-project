@@ -19,10 +19,9 @@ type TPetContext = {
 export const PetContext = createContext<TPetContext | null>(null);
 
 export default function PetContextProvider({
-  data,
+  data: pets,
   children,
 }: PetContextProviderProps) {
-  const [pets, setPets] = useState(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
   //derived state
@@ -34,7 +33,6 @@ export default function PetContextProvider({
   };
 
   const handleCheckoutPet = (id: string) => {
-    setPets((prev) => prev.filter((pet) => pet.id !== id));
     setSelectedPetId(null);
   };
 
