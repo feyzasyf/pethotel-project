@@ -1,8 +1,9 @@
 import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "./ui/button";
+import { ActionType } from "@/lib/types";
 
 type PetButtonProps = {
-  actionType: "add" | "edit" | "checkout";
+  actionType: ActionType;
   children: React.ReactNode;
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;

@@ -6,3 +6,6 @@ export type Pet = {
   age: number;
   notes: string;
 };
+
+export const actionTypes = ["add", "edit", "checkout"] as const;
+export type ActionType = (typeof actionTypes)[number];

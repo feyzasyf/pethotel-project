@@ -1,3 +1,4 @@
+import { AddEditPet } from "@/components/AddEditPet";
 import Branding from "@/components/Branding";
 import ContentBlock from "@/components/ContentBlock";
 import PetButton from "@/components/PetButton";
@@ -22,9 +23,7 @@ export default function Dashboard() {
           <ContentBlock>
             <PetList />
             <div className="absolute bottom-4 right-4">
-              <PetButton actionType="add" className="rounded-full">
-                <PlusIcon className="w-6 h-6 " />
-              </PetButton>
+              <AddEditPet actionType="add" />
             </div>
           </ContentBlock>
         </div>

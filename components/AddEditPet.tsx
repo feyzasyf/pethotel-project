@@ -1,50 +1,61 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
-export function AddEditPet() {
+import PetButton from "./PetButton";
+import { PlusIcon } from "lucide-react";
+import PetForm from "./PetForm";
+import { ActionType, Pet } from "@/lib/types";
+import { useState } from "react";
+
+type AddEditAction = Extract<ActionType, "add" | "edit">;
+
+type AddEditPetProps = {
+  actionType: AddEditAction;
+  pet?: Pet;
+};
+
+export function AddEditPet({ actionType, pet }: AddEditPetProps) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const handleFormSubmission = () => {
+    setIsFormOpen(false);
+  };
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="outline">Open Dialog</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <DialogTrigger asChild>
+        <PetButton
+          actionType={actionType}
+          className={actionType === "add" ? "rounded-full" : ""}
+        >
+          {actionType === "add" ? <PlusIcon className="w-6 h-6 " /> : "Edit"}
+        </PetButton>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>
+            {actionType === "add" ? "Add Pet" : "Edit Pet"}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {" "}
+            {actionType === "add"
+              ? "Fill out the form to add a new pet."
+              : "Fill out the form to edit an existing pet."}
+          </DialogDescription>
+        </DialogHeader>
+
+        <PetForm
+          actionType={actionType}
+          pet={pet}
+          //onFormSubmission={handleFormSubmission}
+        />
+      </DialogContent>
     </Dialog>
   );
 }
