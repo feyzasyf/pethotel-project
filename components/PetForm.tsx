@@ -2,9 +2,8 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Pet } from "@/lib/types";
-import { Button } from "./ui/button";
-
 import { addPet } from "@/actions";
+import PetFormBtn from "./PetFormBtn";
 
 export default function PetForm({
   actionType,
@@ -70,9 +69,7 @@ export default function PetForm({
 
         {/* <Button variant="outline">Cancel</Button> */}
 
-        <Button type="submit" className="rounded-full justify-self-end">
-          {actionType === "add" ? "Add a new pet" : "Edit pet"}
-        </Button>
+        <PetFormBtn actionType={actionType} />
       </div>
     </form>
   );
