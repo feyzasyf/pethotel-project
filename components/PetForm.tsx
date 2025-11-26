@@ -4,6 +4,7 @@ import { Textarea } from "./ui/textarea";
 import { Pet } from "@/lib/types";
 import { addPet } from "@/actions";
 import PetFormBtn from "./PetFormBtn";
+import { toast } from "sonner";
 
 export default function PetForm({
   actionType,
@@ -17,7 +18,10 @@ export default function PetForm({
   return (
     <form
       action={async (formData: FormData) => {
-        await addPet(formData);
+        const result = await addPet(formData);
+        if (result.success === "false") {
+          toast.warning(result.error || "Something went wrong");
+        }
         onFormSubmission();
       }}
     >

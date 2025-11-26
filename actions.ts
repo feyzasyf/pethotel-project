@@ -3,9 +3,11 @@
 import prisma from "./lib/prisma";
 import type { Pet } from "./app/generated/prisma/client";
 import { revalidatePath } from "next/cache";
+import { fail, ok } from "./lib/utils";
+import { ActionResult } from "./lib/types";
 
 export type PetInput = Omit<Pet, "id" | "createdAt" | "updatedAt">;
-export async function addPet(formData: FormData): Promise<void> {
+export async function addPet(formData: FormData): Promise<ActionResult<null>> {
   const pet: PetInput = {
     name: formData.get("name") as string,
     ownerName: formData.get("ownerName") as string,
@@ -20,7 +22,8 @@ export async function addPet(formData: FormData): Promise<void> {
       data: pet,
     });
     revalidatePath("/app", "layout");
+    return ok(null);
   } catch (error) {
-    throw new Error("Failed to add pet");
+    return fail("Failed to add the pet");
   }
 }
