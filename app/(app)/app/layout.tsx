@@ -4,7 +4,6 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import PetContextProvider from "@/contexts/PetContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
 import prisma from "@/lib/prisma";
-import { Pet } from "@/lib/types";
 
 export default async function Layout({
   children,
