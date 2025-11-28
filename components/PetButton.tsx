@@ -29,12 +29,7 @@ export default function PetButton({
   onClick,
 }: PetButtonProps) {
   const { variant, size } = config[actionType];
-  type User = { name: string };
 
-  const obj = { name: "Alice", age: 20 };
-
-  const user: User = obj; // ✔ allowed, age is silently dropped
-  console.log(user);
   return (
     <Button
       variant={variant}
