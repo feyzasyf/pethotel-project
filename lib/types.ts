@@ -10,6 +10,8 @@ export type Pet = {
 export const actionTypes = ["add", "edit", "checkout"] as const;
 export type ActionType = (typeof actionTypes)[number];
 
-export type ActionResult<T> =
-  | { success: "true"; data: T }
-  | { success: "false"; error: string };
+export type ActionResult<T> = {
+  success: boolean;
+  data: T | null;
+  error: string | null;
+};

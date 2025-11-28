@@ -7,9 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function ok<T>(data: T): ActionResult<T> {
-  return { success: "true", data };
+  return { success: true, data, error: null };
 }
 
 export function fail(error: string): ActionResult<never> {
-  return { success: "false", error };
+  return { success: false, data: null, error };
 }

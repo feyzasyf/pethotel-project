@@ -7,6 +7,7 @@ import { fail, ok } from "./lib/utils";
 import { ActionResult } from "./lib/types";
 
 export type PetInput = Omit<Pet, "id" | "createdAt" | "updatedAt">;
+
 export async function addPet(formData: FormData): Promise<ActionResult<null>> {
   const pet: PetInput = {
     name: formData.get("name") as string,

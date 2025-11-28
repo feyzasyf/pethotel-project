@@ -4,10 +4,11 @@ import { useFormStatus } from "react-dom";
 
 export default function PetFromBtn({
   actionType,
+  pending,
 }: {
   actionType: "add" | "edit";
+  pending: boolean;
 }) {
-  const { pending } = useFormStatus();
   return (
     <Button
       type="submit"
