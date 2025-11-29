@@ -2,7 +2,7 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { ActionResult, Pet } from "@/lib/types";
-import { addPet } from "@/actions";
+import { addPet, editPet } from "@/actions";
 import PetFormBtn from "./PetFormBtn";
 import { toast } from "sonner";
 import { useActionState } from "react";
@@ -20,9 +20,11 @@ export default function PetForm({
     prevState: ActionResult<null> | undefined,
     formData: FormData
   ) => {
-    const result = await addPet(formData);
-    console.log(formData);
-    console.log(state);
+    const result =
+      actionType === "add"
+        ? await addPet(formData)
+        : await editPet(formData, pet!.id);
+
     if (result.error) {
       toast.error(result.error);
       return;
