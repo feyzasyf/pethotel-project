@@ -5,7 +5,7 @@ import { ActionType } from "@/lib/types";
 type PetButtonProps = {
   actionType: ActionType;
   children: React.ReactNode;
-  disabled: boolean;
+  disabled?: boolean;
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
@@ -26,7 +26,7 @@ const config = {
 export default function PetButton({
   actionType,
   children,
-  disabled = false,
+  disabled,
   className,
   onClick,
 }: PetButtonProps) {

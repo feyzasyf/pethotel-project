@@ -34,12 +34,7 @@ type Props = {
 };
 function TopBar({ pet }: Props) {
   const { handleCheckoutPet } = usePetContext();
-  const [isPending, startTransition] = useTransition();
 
-  const deletePet = async (id: string) => {
-    await checkoutPet(id);
-    handleCheckoutPet();
-  };
   return (
     <div className="flex items-center bg-white py-5 px-8 border-b border-gray-200">
       <Image
@@ -54,8 +49,8 @@ function TopBar({ pet }: Props) {
         <AddEditPet actionType="edit" pet={pet} />
         <PetButton
           actionType="checkout"
-          disabled={isPending}
-          onClick={() => startTransition(() => deletePet(pet.id))}
+          disabled={false}
+          onClick={() => handleCheckoutPet(pet.id)}
         >
           Checkout
         </PetButton>

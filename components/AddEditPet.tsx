@@ -14,6 +14,7 @@ import { PlusIcon } from "lucide-react";
 import PetForm from "./PetForm";
 import { ActionType, Pet } from "@/lib/types";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 
 type AddEditAction = Extract<ActionType, "add" | "edit">;
 
@@ -25,7 +26,7 @@ type AddEditPetProps = {
 export function AddEditPet({ actionType, pet }: AddEditPetProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const handleFormSubmission = () => {
-    setIsFormOpen(false);
+    flushSync(() => setIsFormOpen(false));
   };
   return (
     <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

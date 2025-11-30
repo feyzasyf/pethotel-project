@@ -2,10 +2,11 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { ActionResult, Pet } from "@/lib/types";
-import { addPet, editPet } from "@/actions";
+import { addPet, editPet, PetInput } from "@/actions";
 import PetFormBtn from "./PetFormBtn";
 import { toast } from "sonner";
 import { useActionState } from "react";
+import { usePetContext } from "@/lib/hooks";
 
 export default function PetForm({
   actionType,
@@ -16,20 +17,34 @@ export default function PetForm({
   pet?: Pet;
   onFormSubmission: () => void;
 }) {
+  const { handleAddPet, handleEditPet } = usePetContext();
   const handleSubmit = async (
     prevState: ActionResult<null> | undefined,
     formData: FormData
   ) => {
+    onFormSubmission();
+
+    const petData: Omit<Pet, "id"> = {
+      //id: new Date().toISOString(),
+      name: formData.get("name") as string,
+      ownerName: formData.get("ownerName") as string,
+      imageUrl:
+        (formData.get("imageUrl") as string) ||
+        "https://placedog.net/200/300?id=33",
+      age: Number(formData.get("age")) as number,
+      notes: formData.get("notes") as string,
+    };
+
     const result =
       actionType === "add"
-        ? await addPet(formData)
-        : await editPet(formData, pet!.id);
+        ? await handleAddPet(petData)
+        : await handleEditPet(pet!.id, petData);
 
     if (result.error) {
       toast.error(result.error);
       return;
     }
-    onFormSubmission();
+
     return result;
   };
   const initialState: ActionResult<null> = {
