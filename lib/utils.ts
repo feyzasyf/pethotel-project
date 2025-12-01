@@ -13,3 +13,7 @@ export function ok<T>(data: T): ActionResult<T> {
 export function fail(error: string): ActionResult<never> {
   return { success: false, data: null, error };
 }
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

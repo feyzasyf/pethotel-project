@@ -1,20 +1,13 @@
-import React from "react";
+import { AddEditAction } from "@/lib/types";
 import { Button } from "./ui/button";
-import { useFormStatus } from "react-dom";
 
-export default function PetFromBtn({
-  actionType,
-  pending,
-}: {
-  actionType: "add" | "edit";
-  pending: boolean;
-}) {
+type PetFormBtnProps = {
+  actionType: AddEditAction;
+};
+
+export default function PetFormBtn({ actionType }: PetFormBtnProps) {
   return (
-    <Button
-      type="submit"
-      disabled={pending}
-      className="rounded-full justify-self-end"
-    >
+    <Button type="submit" className="rounded-full justify-self-end">
       {actionType === "add" ? "Add a new pet" : "Edit pet"}
     </Button>
   );

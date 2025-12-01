@@ -1,8 +1,8 @@
 import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { ActionResult, Pet } from "@/lib/types";
-import { addPet, editPet, PetInput } from "@/actions";
+import { ActionResult, AddEditAction, PetEssentials } from "@/lib/types";
+import { Pet } from "@/app/generated/prisma/client";
 import PetFormBtn from "./PetFormBtn";
 import { toast } from "sonner";
 import { useActionState } from "react";
@@ -13,7 +13,7 @@ export default function PetForm({
   pet,
   onFormSubmission,
 }: {
-  actionType: "add" | "edit";
+  actionType: AddEditAction;
   pet?: Pet;
   onFormSubmission: () => void;
 }) {
@@ -24,8 +24,7 @@ export default function PetForm({
   ) => {
     onFormSubmission();
 
-    const petData: Omit<Pet, "id"> = {
-      //id: new Date().toISOString(),
+    const petData: PetEssentials = {
       name: formData.get("name") as string,
       ownerName: formData.get("ownerName") as string,
       imageUrl:
@@ -52,10 +51,7 @@ export default function PetForm({
     data: null,
     error: null,
   };
-  const [state, formAction, isPending] = useActionState(
-    handleSubmit,
-    initialState
-  );
+  const [state, formAction] = useActionState(handleSubmit, initialState);
 
   return (
     <form action={formAction}>
@@ -111,9 +107,7 @@ export default function PetForm({
           />
         </div>
 
-        {/* <Button variant="outline">Cancel</Button> */}
-
-        <PetFormBtn actionType={actionType} pending={isPending} />
+        <PetFormBtn actionType={actionType} />
       </div>
     </form>
   );

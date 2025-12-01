@@ -12,11 +12,10 @@ import {
 import PetButton from "./PetButton";
 import { PlusIcon } from "lucide-react";
 import PetForm from "./PetForm";
-import { ActionType, Pet } from "@/lib/types";
+import { AddEditAction } from "@/lib/types";
+import { Pet } from "@/app/generated/prisma/client";
 import { useState } from "react";
 import { flushSync } from "react-dom";
-
-type AddEditAction = Extract<ActionType, "add" | "edit">;
 
 type AddEditPetProps = {
   actionType: AddEditAction;

@@ -1,12 +1,10 @@
 "use client";
 
 import { usePetContext } from "@/lib/hooks";
-import { Pet } from "@/lib/types";
+import { Pet } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import PetButton from "./PetButton";
 import { AddEditPet } from "./AddEditPet";
-import { checkoutPet } from "@/actions";
-import { useTransition } from "react";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -49,7 +47,6 @@ function TopBar({ pet }: Props) {
         <AddEditPet actionType="edit" pet={pet} />
         <PetButton
           actionType="checkout"
-          disabled={false}
           onClick={() => handleCheckoutPet(pet.id)}
         >
           Checkout

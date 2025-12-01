@@ -1,14 +1,12 @@
 "use server";
 
 import prisma from "./lib/prisma";
-import type { Pet } from "./app/generated/prisma/client";
 import { revalidatePath } from "next/cache";
-import { fail, ok } from "./lib/utils";
-import { ActionResult } from "./lib/types";
+import { fail, ok, sleep } from "./lib/utils";
+import { ActionResult, PetEssentials } from "./lib/types";
 
-export type PetInput = Omit<Pet, "id" | "createdAt" | "updatedAt">;
-
-export async function addPet(pet: PetInput): Promise<ActionResult<null>> {
+export async function addPet(pet: PetEssentials): Promise<ActionResult<null>> {
+  await sleep(1000);
   try {
     await prisma.pet.create({
       data: pet,
@@ -21,9 +19,10 @@ export async function addPet(pet: PetInput): Promise<ActionResult<null>> {
 }
 
 export async function editPet(
-  newPet: PetInput,
+  newPet: PetEssentials,
   id: string
 ): Promise<ActionResult<null>> {
+  await sleep(1000);
   try {
     await prisma.pet.update({
       where: { id: id },
@@ -37,6 +36,7 @@ export async function editPet(
 }
 
 export async function checkoutPet(id: string) {
+  await sleep(1000);
   try {
     await prisma.pet.delete({
       where: { id: id },
