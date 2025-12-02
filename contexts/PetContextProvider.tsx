@@ -54,14 +54,18 @@ export default function PetContextProvider({
 
   const handleAddPet = async (newPet: PetEssentials) => {
     const tempPet = { ...newPet, id: new Date().toISOString() };
-    setOptimisticPets({ type: "add", payload: tempPet });
+    startTransition(() => {
+      setOptimisticPets({ type: "add", payload: tempPet });
+    });
     const result = await addPet(newPet);
 
     return result;
   };
 
   const handleEditPet = async (petId: Pet["id"], updatedPet: PetEssentials) => {
-    setOptimisticPets({ type: "edit", payload: { id: petId, updatedPet } });
+    startTransition(() => {
+      setOptimisticPets({ type: "edit", payload: { id: petId, updatedPet } });
+    });
     const result = await editPet(updatedPet, petId);
 
     return result;
