@@ -16,7 +16,7 @@ export default function ContentBlock({
         className
       )}
     >
-      {children}
+      <div className="h-full overflow-y-auto">{children}</div>
     </div>
   );
 }

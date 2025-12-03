@@ -19,9 +19,10 @@ export default function Dashboard() {
         <div className="md:row-start-1 md:row-span-1 md:col-start-1 md:col-span-1">
           <SearchForm />
         </div>
-        <div className="relative md:row-start-2 md:row-span-full md:col-start-1 md:col-span-1">
+        <div className="relative md:row-start-2 md:row-span-full md:col-start-1 md:col-span-1 min-h-0">
           <ContentBlock>
             <PetList />
+
             <div className="absolute bottom-4 right-4">
               <AddEditPet actionType="add" />
             </div>
