@@ -6,7 +6,7 @@ export default function SignUp() {
   return (
     <main>
       <Heading className="text-center mb-6">Sign up</Heading>
-      <AuthForm />
+      <AuthForm type="signUp" />
       <p className="mt-6 text-sm text-zinc-500">
         Already have an account?{" "}
         <Link className="font-medium" href="/login">

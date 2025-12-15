@@ -2,8 +2,10 @@ import React from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-
-export default function AuthForm() {
+type AuthFormProps = {
+  type: "login" | "signUp";
+};
+export default function AuthForm({ type }: AuthFormProps) {
   return (
     <form className="space-y-2">
       <div className="space-y-2 my-4">
@@ -15,7 +17,7 @@ export default function AuthForm() {
         <Input type="password" id="password" name="password" required />
       </div>
       <Button type="submit" className="w-full mt-4">
-        Log in
+        {type === "login" ? "Log in" : "Sign up"}
       </Button>
     </form>
   );
