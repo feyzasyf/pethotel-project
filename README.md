@@ -7,8 +7,8 @@ This is an ongoing project
 1. [X] Create marketing page
 2. [X] Create dahsboard and account page 
 3. [x] Add Prisma and perform CRUD operations on pets
-4. [ ] Add authentication using Next Auth
-5. [ ] Protect dashboard routes
+4. [X] Add authentication using Next Authv5
+5. [X] Protect dashboard routes
 6. [ ] Add payment (stripe)
 
 ## Getting Started
