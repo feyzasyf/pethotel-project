@@ -5,7 +5,31 @@ import { revalidatePath } from "next/cache";
 import { fail, ok, sleep } from "./lib/utils";
 import { ActionResult } from "./lib/types";
 import { petFormSchema, petIdSchema } from "./lib/validations";
+import { signIn, signOut } from "./lib/auth";
+import { redirect } from "next/navigation";
 
+//--- user actions ----
+
+export async function logOut() {
+  await signOut({ redirectTo: "/" });
+}
+
+export async function logIn(formData: FormData) {
+  const authData = Object.fromEntries(formData.entries());
+
+  const { email, password } = authData;
+
+  await signIn("credentials", {
+    redirect: false,
+    email: String(email),
+    password: String(password),
+    //callbackUrl: "/app",
+  });
+
+  redirect("/app/dashboard");
+}
+
+//----pet actions ----
 export async function addPet(pet: unknown): Promise<ActionResult<null>> {
   await sleep(1000);
 
