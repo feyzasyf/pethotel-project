@@ -7,11 +7,41 @@ import { ActionResult } from "./lib/types";
 import { petFormSchema, petIdSchema } from "./lib/validations";
 import { signIn, signOut } from "./lib/auth";
 import { redirect } from "next/navigation";
+import bcrypt from "bcrypt";
 
 //--- user actions ----
 
 export async function logOut() {
   await signOut({ redirectTo: "/" });
+}
+
+export async function signUp(formData: FormData) {
+  const authData = Object.fromEntries(formData.entries());
+  const hashedPassword = await bcrypt.hash(String(authData.password), 10);
+
+  await prisma.user?.create({
+    data: {
+      email: String(authData.email),
+      hashedPassword: hashedPassword,
+    },
+  });
+
+  await signIn("credentials", {
+    redirect: false,
+    email: String(authData.email),
+    password: String(authData.password),
+  });
+  redirect("/app/dashboard");
+}
+
+export async function authAction(formData: FormData) {
+  const type = formData.get("type");
+
+  if (type === "login") {
+    await logIn(formData);
+  } else {
+    await signUp(formData);
+  }
 }
 
 export async function logIn(formData: FormData) {
@@ -23,7 +53,6 @@ export async function logIn(formData: FormData) {
     redirect: false,
     email: String(email),
     password: String(password),
-    //callbackUrl: "/app",
   });
 
   redirect("/app/dashboard");
