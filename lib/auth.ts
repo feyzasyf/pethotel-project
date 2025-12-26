@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
-import { is } from "zod/v4/locales";
+import { NextAuthConfig } from "next-auth";
 
 export const { signIn, auth, handlers, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -50,9 +50,30 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
         return Response.redirect(new URL("/app/dashboard", request.nextUrl));
       }
 
+      if (
+        isLoggedIn &&
+        (request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup"))
+      ) {
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+
       return true;
     },
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.userId = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      if (token?.userId) {
+        session.user.id = token.userId;
+      }
+      return session;
+    },
   },
+
   pages: {
     signIn: "/login",
     //signOut: "/login",

@@ -5,16 +5,21 @@ import { Toaster } from "@/components/ui/sonner";
 import PetContextProvider from "@/contexts/PetContextProvider";
 import SearchContextProvider from "@/contexts/SearchContextProvider";
 import prisma from "@/lib/prisma";
-
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pets = await prisma.pet.findMany();
-  // const user = await prisma.user.findUnique({
-  //   where: { email: "john@gmail.com" },
-  // });
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const pets = await prisma.pet.findMany({
+    where: { userId: session.user.id },
+  });
 
   return (
     <>
