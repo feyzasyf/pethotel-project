@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { fail, ok, sleep } from "./lib/utils";
 import { ActionResult } from "./lib/types";
 import { petFormSchema, petIdSchema } from "./lib/validations";
-import { signIn, signOut } from "./lib/auth";
+import { auth, signIn, signOut } from "./lib/auth";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
 
@@ -62,13 +62,24 @@ export async function logIn(formData: FormData) {
 export async function addPet(pet: unknown): Promise<ActionResult<null>> {
   await sleep(1000);
 
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   const validatedPet = petFormSchema.safeParse(pet);
+
   if (validatedPet.success === false) {
     return fail("Invalid pet data");
   }
+
   try {
     await prisma.pet.create({
-      data: validatedPet.data,
+      data: {
+        ...validatedPet.data,
+        user: { connect: { id: session?.user?.id } },
+      },
     });
     revalidatePath("/app", "layout");
     return ok(null);
@@ -103,12 +114,35 @@ export async function editPet(
 export async function checkoutPet(petId: unknown) {
   await sleep(1000);
 
+  //authentication check
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  //validation
   const validatedId = petIdSchema.safeParse(petId);
 
   if (validatedId.success === false) {
     return fail("Invalid pet data");
   }
 
+  //authorization check (user owns pet)
+  const pet = await prisma.pet.findUnique({
+    where: { id: validatedId.data },
+    select: {
+      userId: true,
+    },
+  });
+  if (!pet) {
+    return fail("Pet not found");
+  }
+
+  if (pet.userId !== session.user.id) {
+    return fail("You are not authorized to delete this pet");
+  }
+
+  //database mutation
   try {
     await prisma.pet.delete({
       where: { id: validatedId.data },
