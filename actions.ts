@@ -8,6 +8,7 @@ import { petFormSchema, petIdSchema } from "./lib/validations";
 import { auth, signIn, signOut } from "./lib/auth";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
+import { checkAuth } from "./lib/serverUtils";
 
 //--- user actions ----
 
@@ -94,10 +95,28 @@ export async function editPet(
 ): Promise<ActionResult<null>> {
   await sleep(1000);
 
+  //authentication check
+  const session = await checkAuth();
+
   const validatedId = petIdSchema.safeParse(id);
   const validatedPet = petFormSchema.safeParse(newPet);
   if (validatedPet.success === false || validatedId.success === false) {
     return fail("Invalid pet data");
+  }
+
+  //authorization check (user owns pet)
+  const pet = await prisma.pet.findUnique({
+    where: { id: validatedId.data },
+    select: {
+      userId: true,
+    },
+  });
+  if (!pet) {
+    return fail("Pet not found");
+  }
+
+  if (pet.userId !== session.user.id) {
+    return fail("You are not authorized to delete this pet");
   }
   try {
     await prisma.pet.update({

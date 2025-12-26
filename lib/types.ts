@@ -1,3 +1,4 @@
+import { Session } from "next-auth";
 import type { Pet } from "../app/generated/prisma/client";
 
 export type PetEssentials = Omit<Pet, "id" | "createdAt" | "updatedAt">;
@@ -12,3 +13,5 @@ export type ActionResult<T> = {
   data: T | null;
   error: string | null;
 };
+
+export type AuthenticatedSession = Session & { user: { id: string } };
