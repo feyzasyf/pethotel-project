@@ -1,7 +1,10 @@
 import { Session } from "next-auth";
 import type { Pet } from "../app/generated/prisma/client";
 
-export type PetEssentials = Omit<Pet, "id" | "createdAt" | "updatedAt">;
+export type PetEssentials = Omit<
+  Pet,
+  "id" | "createdAt" | "updatedAt" | "userId"
+>;
 
 export const actionTypes = ["add", "edit", "checkout"] as const;
 export type ActionType = (typeof actionTypes)[number];
