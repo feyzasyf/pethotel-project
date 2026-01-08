@@ -1,8 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import prisma from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { getUserByEmail } from "./serverUtils";
+import { authSchema, TAuth } from "./validations";
+import { fail } from "./utils";
 
 export const { signIn, auth, handlers, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -15,12 +16,16 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
           return null;
         }
 
-        const { email, password } = credentials as {
-          email: string;
-          password: string;
-        };
+        //validate the object
+        const validatedAuthDataObject = authSchema.safeParse(credentials);
+        if (!validatedAuthDataObject.success) {
+          return null;
+        }
+
+        const { email, password } = validatedAuthDataObject.data;
 
         const user = await getUserByEmail(email);
+
         if (!user) {
           return null;
         }
@@ -28,6 +33,7 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
           password,
           user.hashedPassword
         );
+
         if (!passwordsMatch) {
           return null;
         }

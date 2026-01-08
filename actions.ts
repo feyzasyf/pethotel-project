@@ -4,7 +4,7 @@ import prisma from "./lib/prisma";
 import { revalidatePath } from "next/cache";
 import { fail, ok, sleep } from "./lib/utils";
 import { ActionResult } from "./lib/types";
-import { petFormSchema, petIdSchema } from "./lib/validations";
+import { authSchema, petFormSchema, petIdSchema } from "./lib/validations";
 import { auth, signIn, signOut } from "./lib/auth";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
@@ -15,21 +15,33 @@ export async function logOut() {
   await signOut({ redirectTo: "/" });
 }
 
-export async function signUp(formData: FormData) {
-  const authData = Object.fromEntries(formData.entries());
-  const hashedPassword = await bcrypt.hash(String(authData.password), 10);
+export async function signUp(formData: unknown) {
+  if (!(formData instanceof FormData)) {
+    return fail("Invalid form data");
+  }
 
+  //convert formData to a plain object
+  const formDataEntries = Object.fromEntries(formData.entries());
+
+  //validation
+  const validatedFormData = authSchema.safeParse(formDataEntries);
+  if (!validatedFormData.success) {
+    return fail("Invalid email or password");
+  }
+
+  const { email, password } = validatedFormData.data;
+  const hashedPassword = await bcrypt.hash(password, 10);
   await prisma.user?.create({
     data: {
-      email: String(authData.email),
+      email: email,
       hashedPassword: hashedPassword,
     },
   });
 
   await signIn("credentials", {
     redirect: false,
-    email: String(authData.email),
-    password: String(authData.password),
+    email: email,
+    password: password,
   });
   redirect("/app/dashboard");
 }
@@ -44,12 +56,21 @@ export async function authAction(formData: FormData) {
   }
 }
 
-export async function logIn(formData: FormData) {
-  const authData = Object.fromEntries(formData.entries());
+export async function logIn(formData: unknown) {
+  if (!(formData instanceof FormData)) {
+    return fail("Invalid form data");
+  }
 
-  const { email, password } = authData;
+  const validatedFormData = authSchema.safeParse(
+    Object.fromEntries(formData.entries())
+  );
 
-  await signIn("credentials", {
+  if (!validatedFormData.success) {
+    return fail("Invalid email or password");
+  }
+  const { email, password } = validatedFormData.data;
+
+  const result = await signIn("credentials", {
     redirect: false,
     email: String(email),
     password: String(password),

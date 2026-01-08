@@ -1,5 +1,5 @@
 import { DEFAULT_PET_IMAGE } from "@/lib/constants";
-import z from "zod";
+import z, { email } from "zod";
 
 export type TPetFormInput = z.input<typeof petFormSchema>;
 
@@ -23,3 +23,10 @@ export const petFormSchema = z
   }));
 
 export const petIdSchema = z.cuid("Invalid pet ID");
+
+export const authSchema = z.object({
+  email: z.email("Invalid email address").max(100),
+  password: z.string().min(6, "Password must be at least 6 characters").max(30),
+});
+
+export type TAuth = z.infer<typeof authSchema>;
