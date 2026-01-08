@@ -2,8 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { getUserByEmail } from "./serverUtils";
-import { authSchema, TAuth } from "./validations";
-import { fail } from "./utils";
+import { authSchema } from "./validations";
 
 export const { signIn, auth, handlers, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
