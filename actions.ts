@@ -9,6 +9,7 @@ import { auth, signIn, signOut } from "./lib/auth";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
 import { checkAuth, getPetByPetId } from "./lib/serverUtils";
+import { isUniqueConstraintError } from "./lib/prismaErrors";
 
 //--- user actions ----
 export async function logOut() {
@@ -31,12 +32,19 @@ export async function signUp(formData: unknown) {
 
   const { email, password } = validatedFormData.data;
   const hashedPassword = await bcrypt.hash(password, 10);
-  await prisma.user?.create({
-    data: {
-      email: email,
-      hashedPassword: hashedPassword,
-    },
-  });
+
+  try {
+    await prisma.user?.create({
+      data: {
+        email: email,
+        hashedPassword: hashedPassword,
+      },
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      return fail("A user with this email already exists");
+    }
+  }
 
   await signIn("credentials", {
     redirect: false,

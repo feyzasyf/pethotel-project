@@ -1,5 +1,5 @@
 import { DEFAULT_PET_IMAGE } from "@/lib/constants";
-import z, { email } from "zod";
+import z from "zod";
 
 export type TPetFormInput = z.input<typeof petFormSchema>;
 
