@@ -1,13 +1,16 @@
-import React from "react";
+"use client";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import type { AuthFormProps } from "@/lib/types";
 import { authAction } from "@/actions";
-import AuthFormBtn from "./AuthFormBtn";
+import { Button } from "./ui/button";
+import { useActionState } from "react";
 
 export default function AuthForm({ type }: AuthFormProps) {
+  const [authState, dispatchAuth, isPending] = useActionState(authAction, null);
+
   return (
-    <form action={authAction} className="space-y-2">
+    <form action={dispatchAuth} className="space-y-2">
       <input type="hidden" name="type" value={type} />
       <div className="space-y-2 my-4">
         <Label htmlFor="email">Email</Label>
@@ -23,7 +26,12 @@ export default function AuthForm({ type }: AuthFormProps) {
           maxLength={30}
         />
       </div>
-      <AuthFormBtn type={type} />
+      <Button type="submit" className="w-full mt-4" disabled={isPending}>
+        {type === "login" ? "Log in" : "Sign up"}
+      </Button>
+      {authState?.error && (
+        <p className="text-red-500 mt-2">{authState.error}</p>
+      )}
     </form>
   );
 }

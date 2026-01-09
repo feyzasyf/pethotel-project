@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
 import { checkAuth, getPetByPetId } from "./lib/serverUtils";
 import { isUniqueConstraintError } from "./lib/prismaErrors";
+import { AuthError } from "next-auth";
 
 //--- user actions ----
 export async function logOut() {
@@ -54,13 +55,13 @@ export async function signUp(formData: unknown) {
   redirect("/app/dashboard");
 }
 
-export async function authAction(formData: FormData) {
+export async function authAction(prevState: unknown, formData: FormData) {
   const type = formData.get("type");
 
   if (type === "login") {
-    await logIn(formData);
+    return await logIn(formData);
   } else {
-    await signUp(formData);
+    return await signUp(formData);
   }
 }
 
@@ -78,11 +79,23 @@ export async function logIn(formData: unknown) {
   }
   const { email, password } = validatedFormData.data;
 
-  const result = await signIn("credentials", {
-    redirect: false,
-    email: String(email),
-    password: String(password),
-  });
+  try {
+    await signIn("credentials", {
+      redirect: false,
+      email: String(email),
+      password: String(password),
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return fail("Invalid email or password");
+        default:
+          return fail("Could not sign in");
+      }
+    }
+    return fail("Could not sign in");
+  }
 
   redirect("/app/dashboard");
 }
