@@ -1,12 +1,10 @@
 import React from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import type { AuthFormProps } from "@/lib/types";
 import { authAction } from "@/actions";
+import AuthFormBtn from "./AuthFormBtn";
 
-type AuthFormProps = {
-  type: "login" | "signUp";
-};
 export default function AuthForm({ type }: AuthFormProps) {
   return (
     <form action={authAction} className="space-y-2">
@@ -25,9 +23,7 @@ export default function AuthForm({ type }: AuthFormProps) {
           maxLength={30}
         />
       </div>
-      <Button type="submit" className="w-full mt-4">
-        {type === "login" ? "Log in" : "Sign up"}
-      </Button>
+      <AuthFormBtn type={type} />
     </form>
   );
 }

@@ -18,3 +18,7 @@ export type ActionResult<T> = {
 };
 
 export type AuthenticatedSession = Session & { user: { id: string } };
+
+export type AuthFormProps = {
+  type: "login" | "signUp";
+};
