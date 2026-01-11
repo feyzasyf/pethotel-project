@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { getUserByEmail } from "./serverUtils";
 import { authSchema } from "./validations";
+import { is } from "zod/v4/locales";
 
 export const { signIn, auth, handlers, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -48,25 +49,42 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
       const isLoggedIn = !!auth?.user;
       const istryingToAccessAppRoute =
         request.nextUrl.pathname.startsWith("/app");
+
+      if (isLoggedIn && istryingToAccessAppRoute && !auth?.user.hasAccess) {
+        return Response.redirect(new URL("/payment", request.nextUrl));
+      }
+
+      if (isLoggedIn && istryingToAccessAppRoute && auth?.user.hasAccess) {
+        return true;
+      }
       if (istryingToAccessAppRoute && !isLoggedIn) {
         return false;
       }
-      if (isLoggedIn && !istryingToAccessAppRoute) {
-        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+
+      if (isLoggedIn && !istryingToAccessAppRoute && !auth?.user.hasAccess) {
+        if (
+          request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup")
+        ) {
+          return Response.redirect(new URL("/payment", request.nextUrl));
+        }
+        return true;
       }
 
       if (
         isLoggedIn &&
         (request.nextUrl.pathname.includes("/login") ||
-          request.nextUrl.pathname.includes("/signup"))
+          request.nextUrl.pathname.includes("/signup")) &&
+        auth?.user.hasAccess
       ) {
         return Response.redirect(new URL("/app/dashboard", request.nextUrl));
       }
 
-      return true;
+      return false;
     },
     jwt: ({ token, user }) => {
       if (user) {
+        token.hasAccess = user.hasAccess;
         token.userId = user.id;
       }
       return token;
@@ -74,6 +92,7 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
     session: ({ session, token }) => {
       if (token?.userId) {
         session.user.id = token.userId;
+        session.user.hasAccess = token.hasAccess;
       }
       return session;
     },

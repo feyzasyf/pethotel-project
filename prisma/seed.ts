@@ -11,7 +11,7 @@ const userData: Prisma.UserCreateInput = {
       {
         name: "Benjamin",
         ownerName: "John Doe",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-4.png",
+        imageUrl: "https://placedog.net/500/280",
         age: 2,
         notes:
           "Doesn't like to be touched on the belly. Plays well with other dogs.",
@@ -19,14 +19,14 @@ const userData: Prisma.UserCreateInput = {
       {
         name: "Richard",
         ownerName: "Josephine Dane",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-5.png",
+        imageUrl: "https://placedog.net/500/280",
         age: 5,
         notes: "Needs medication twice a day.",
       },
       {
         name: "Anna",
         ownerName: "Frank Doe",
-        imageUrl: "https://bytegrad.com/course-assets/images/rn-image-6.png",
+        imageUrl: "https://placedog.net/500/280",
         age: 4,
         notes: "Allergic to chicken.",
       },
