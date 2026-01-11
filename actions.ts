@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import { checkAuth, getPetByPetId } from "./lib/serverUtils";
 import { isUniqueConstraintError } from "./lib/prismaErrors";
 import { AuthError } from "next-auth";
+import { stripe } from "./lib/stripe";
 
 //--- user actions ----
 export async function logOut() {
@@ -205,4 +206,29 @@ export async function checkoutPet(petId: unknown) {
   } catch (error) {
     return fail("Failed to delete the pet");
   }
+}
+
+//payment action
+export async function createCheckoutSession() {
+  const session = await checkAuth();
+  if (!session.user.email) {
+    return fail("User email not found");
+  }
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer_email: session.user.email,
+    line_items: [
+      {
+        price: process.env.PRICE_ID,
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.BASE_URL}/payment?success=true`,
+    cancel_url: `${process.env.BASE_URL}/payment?canceled=true`,
+  });
+  if (!checkoutSession.url) {
+    redirect("/payment");
+  }
+  redirect(checkoutSession.url);
 }
