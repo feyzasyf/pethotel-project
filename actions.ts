@@ -30,7 +30,6 @@ export async function signUp(formData: unknown) {
   //validation
   const validatedFormData = authSchema.safeParse(formDataEntries);
   if (!validatedFormData.success) {
-    console.log(validatedFormData.error);
     return fail("Invalid email or password");
   }
 
