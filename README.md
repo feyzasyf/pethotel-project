@@ -9,7 +9,9 @@ This is an ongoing project
 3. [x] Add Prisma and perform CRUD operations on pets
 4. [X] Add authentication using Next Authv5
 5. [X] Protect dashboard routes
-6. [ ] Add payment (stripe)
+6. [X] Add payment (stripe)
+7. [ ] Deploy to Vercel
+8. [ ] Prepare README.md
 
 ## Getting Started
 
