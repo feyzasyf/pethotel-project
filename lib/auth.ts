@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { getUserByEmail } from "./serverUtils";
 import { authSchema } from "./validations";
-import { is } from "zod/v4/locales";
+import prisma from "./prisma";
 
 export const { signIn, auth, handlers, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -47,21 +47,23 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
   callbacks: {
     authorized: ({ auth, request }) => {
       const isLoggedIn = !!auth?.user;
+
+      const hasAppAccess = auth?.user?.hasAccess || false;
       const istryingToAccessAppRoute =
         request.nextUrl.pathname.startsWith("/app");
 
-      if (isLoggedIn && istryingToAccessAppRoute && !auth?.user.hasAccess) {
+      if (isLoggedIn && istryingToAccessAppRoute && !hasAppAccess) {
         return Response.redirect(new URL("/payment", request.nextUrl));
       }
 
-      if (isLoggedIn && istryingToAccessAppRoute && auth?.user.hasAccess) {
+      if (isLoggedIn && istryingToAccessAppRoute && hasAppAccess) {
         return true;
       }
       if (istryingToAccessAppRoute && !isLoggedIn) {
         return false;
       }
 
-      if (isLoggedIn && !istryingToAccessAppRoute && !auth?.user.hasAccess) {
+      if (isLoggedIn && !istryingToAccessAppRoute && !hasAppAccess) {
         if (
           request.nextUrl.pathname.includes("/login") ||
           request.nextUrl.pathname.includes("/signup")
@@ -75,17 +77,30 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
         isLoggedIn &&
         (request.nextUrl.pathname.includes("/login") ||
           request.nextUrl.pathname.includes("/signup")) &&
-        auth?.user.hasAccess
+        hasAppAccess
       ) {
         return Response.redirect(new URL("/app/dashboard", request.nextUrl));
       }
 
       return false;
     },
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user }) => {
       if (user) {
+        //on sign in
         token.hasAccess = user.hasAccess;
         token.userId = user.id;
+      }
+
+      if (token.forceRefresh && token.userId) {
+        //on session update
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.userId },
+          select: { hasAccess: true },
+        });
+
+        if (dbUser) {
+          token.hasAccess = dbUser.hasAccess;
+        }
       }
       return token;
     },
