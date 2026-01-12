@@ -2,7 +2,7 @@
 import { createCheckoutSession } from "@/actions";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { use, useEffect, useTransition } from "react";
+import { use, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -16,7 +16,7 @@ function Payment({
   const router = useRouter();
   const { update } = useSession();
 
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   return (
     <main className="flex flex-col items-center space-y-10">
@@ -25,9 +25,8 @@ function Payment({
         <Button
           disabled={isPending}
           onClick={async () => {
-            startTransition(async () => {
-              await createCheckoutSession();
-            });
+            setIsPending(true);
+            await createCheckoutSession();
           }}
         >
           Buy lifetime access for $299
