@@ -216,6 +216,9 @@ export async function createCheckoutSession() {
 
   const checkoutSession = await stripe.checkout.sessions.create({
     customer_email: session.user.email,
+    metadata: {
+      userId: session.user.id,
+    },
     line_items: [
       {
         price: process.env.PRICE_ID,

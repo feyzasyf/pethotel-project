@@ -2,7 +2,7 @@
 import { createCheckoutSession } from "@/actions";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -14,9 +14,23 @@ function Payment({
   const { success, cancelled } = use(searchParams);
 
   const router = useRouter();
-  const { update } = useSession();
+  const { data: session, update, status } = useSession();
 
   const [isPending, setIsPending] = useState(false);
+
+  useEffect(() => {
+    if (!success) return;
+
+    if (session?.user?.hasAccess) {
+      router.push("/app/dashboard");
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      await update({ forceRefresh: true });
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [success, session, update, router]);
 
   return (
     <main className="flex flex-col items-center space-y-10">
@@ -24,9 +38,9 @@ function Payment({
       {!success && (
         <Button
           disabled={isPending}
-          onClick={async () => {
+          onClick={() => {
             setIsPending(true);
-            await createCheckoutSession();
+            createCheckoutSession();
           }}
         >
           Buy lifetime access for $299
@@ -34,16 +48,18 @@ function Payment({
       )}
       {success && (
         <>
-          <Button
+          {/* <Button
+            disabled={status === "loading"}
             onClick={async () => {
               await update({ forceRefresh: true });
               router.push("/app/dashboard");
             }}
           >
             Access PetHotel
-          </Button>
+          </Button> */}
           <p className="text-sm text-green-700">
-            Payment successful! You now have lifetime access to PetHotel
+            Payment successful 🎉 We’re finalizing your access. This may take a
+            few seconds.
           </p>
         </>
       )}
