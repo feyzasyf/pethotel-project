@@ -2,7 +2,9 @@
 import { createCheckoutSession } from "@/actions";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { use, useTransition } from "react";
+import { use, useEffect, useTransition } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function Payment({
   searchParams,
@@ -10,6 +12,9 @@ function Payment({
   searchParams: Promise<{ success?: string; cancelled?: string }>;
 }) {
   const { success, cancelled } = use(searchParams);
+
+  const router = useRouter();
+  const { update } = useSession();
 
   const [isPending, startTransition] = useTransition();
 
@@ -29,9 +34,19 @@ function Payment({
         </Button>
       )}
       {success && (
-        <p className="text-sm text-green-700">
-          Payment successful! You now have lifetime access to PetHotel
-        </p>
+        <>
+          <Button
+            onClick={async () => {
+              await update({ forceRefresh: true });
+              router.push("/app/dashboard");
+            }}
+          >
+            Access PetHotel
+          </Button>
+          <p className="text-sm text-green-700">
+            Payment successful! You now have lifetime access to PetHotel
+          </p>
+        </>
       )}
       {cancelled && (
         <p className="text-sm text-red-700">
