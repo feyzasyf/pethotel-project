@@ -6,6 +6,7 @@ declare module "next-auth" {
   }
 
   interface Session {
+    forceRefresh?: boolean;
     user: User & {
       id: string;
     };

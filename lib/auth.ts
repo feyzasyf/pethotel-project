@@ -62,6 +62,9 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
       if (istryingToAccessAppRoute && !isLoggedIn) {
         return false;
       }
+      if (!isLoggedIn && !istryingToAccessAppRoute) {
+        return true;
+      }
 
       if (isLoggedIn && !istryingToAccessAppRoute && !hasAppAccess) {
         if (
@@ -84,14 +87,16 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
 
       return false;
     },
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, session, user }) => {
+      const forceRefresh = session?.forceRefresh;
+
       if (user) {
         //on sign in
         token.hasAccess = user.hasAccess;
         token.userId = user.id;
       }
 
-      if (token.forceRefresh && token.userId) {
+      if (forceRefresh && token.userId) {
         //on session update
         const dbUser = await prisma.user.findUnique({
           where: { id: token.userId },
@@ -102,6 +107,7 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
           token.hasAccess = dbUser.hasAccess;
         }
       }
+
       return token;
     },
     session: ({ session, token }) => {
