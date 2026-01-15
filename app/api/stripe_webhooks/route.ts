@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(bodyData, signature, endPointSecret);
-    console.log(event);
+  
 
     switch (event.type) {
       case "checkout.session.completed":

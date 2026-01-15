@@ -4,7 +4,6 @@ import { auth } from "./auth";
 import { assertIsAuthenticated } from "./guards";
 import { Pet, User } from "@/app/generated/prisma/client";
 import prisma from "./prisma";
-import Stripe from "stripe";
 
 export async function checkAuth() {
   const session = await auth();
@@ -34,16 +33,4 @@ export async function getUserByEmail(email: User["email"]) {
   return user;
 }
 
-export async function handleCheckoutSessionCompleted(
-  event: Stripe.CheckoutSessionCompletedEvent
-) {
-  const userId = event.data.object.metadata?.userId;
-
-  if (!userId) {
-    throw new Error("User ID is missing ");
-  }
-  await prisma.user.update({
-    where: { id: userId },
-    data: { hasAccess: true },
-  });
-}
+export { handleCheckoutSessionCompleted } from "./handlers";
