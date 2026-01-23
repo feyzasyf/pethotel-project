@@ -8,18 +8,18 @@ export default function PetList() {
   const { pets, selectedPetId, handleChangeSelectedPetId } = usePetContext();
   const { searchTerm } = useSearchContext();
   const filteredPets = pets.filter((pet) =>
-    pet.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    pet.name.toLowerCase().includes(searchTerm.toLowerCase().trim()),
   );
 
   return (
     <ul className="bg-white border-b border-black/8">
       {filteredPets.map((pet) => (
-        <li key={pet.id}>
+        <li className="border-b  border-black/8" key={pet.id}>
           <button
             onClick={() => handleChangeSelectedPetId(pet.id)}
             className={cn(
               "flex items-center h-[70px] w-full cursor-pointer hover:bg-[#EFF1F2] focus:bg-[#EFF1F2] px-5 text-base gap-3 transition",
-              { "bg-gray-200": selectedPetId == pet.id }
+              { "bg-gray-200": selectedPetId == pet.id },
             )}
           >
             <Image
