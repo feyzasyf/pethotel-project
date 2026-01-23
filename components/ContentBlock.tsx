@@ -13,10 +13,10 @@ export default function ContentBlock({
     <div
       className={cn(
         "bg-[#F7F8FA] shadow-sm rounded-md overflow-hidden w-full h-full",
-        className
+        className,
       )}
     >
-      <div className="h-full overflow-y-auto">{children}</div>
+      {children}
     </div>
   );
 }
