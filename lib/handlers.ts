@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import prisma from "./prisma";
 
 export async function handleCheckoutSessionCompleted(
-  event: Stripe.CheckoutSessionCompletedEvent
+  event: Stripe.CheckoutSessionCompletedEvent,
 ) {
   const userId = event.data.object.metadata?.userId;
 

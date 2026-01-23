@@ -31,7 +31,7 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
         }
         const passwordsMatch = await bcrypt.compare(
           password,
-          user.hashedPassword
+          user.hashedPassword,
         );
 
         if (!passwordsMatch) {
@@ -49,24 +49,27 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
       const isLoggedIn = !!auth?.user;
 
       const hasAppAccess = auth?.user?.hasAccess || false;
-      const istryingToAccessAppRoute =
+      const isTryingToAccessAppRoute =
         request.nextUrl.pathname.startsWith("/app");
 
-      if (isLoggedIn && istryingToAccessAppRoute && !hasAppAccess) {
+      //if user is not logged in, we will skip further checks
+      if (!isLoggedIn && isTryingToAccessAppRoute) {
+        return false;
+      }
+
+      if (!isLoggedIn && !isTryingToAccessAppRoute) {
+        return true;
+      }
+
+      if (isLoggedIn && isTryingToAccessAppRoute && !hasAppAccess) {
         return Response.redirect(new URL("/payment", request.nextUrl));
       }
 
-      if (isLoggedIn && istryingToAccessAppRoute && hasAppAccess) {
-        return true;
-      }
-      if (istryingToAccessAppRoute && !isLoggedIn) {
-        return false;
-      }
-      if (!isLoggedIn && !istryingToAccessAppRoute) {
+      if (isLoggedIn && isTryingToAccessAppRoute && hasAppAccess) {
         return true;
       }
 
-      if (isLoggedIn && !istryingToAccessAppRoute && !hasAppAccess) {
+      if (isLoggedIn && !isTryingToAccessAppRoute && !hasAppAccess) {
         if (
           request.nextUrl.pathname.includes("/login") ||
           request.nextUrl.pathname.includes("/signup")
@@ -88,15 +91,14 @@ export const { signIn, auth, handlers, signOut } = NextAuth({
       return false;
     },
     jwt: async ({ token, session, user }) => {
-      const forceRefresh = session?.forceRefresh;
-
       if (user) {
         //on sign in
         token.hasAccess = user.hasAccess;
         token.userId = user.id;
       }
 
-      if (forceRefresh && token.userId) {
+      //if (forceRefresh && token.userId) {
+      if (token.userId) {
         //on session update
         const dbUser = await prisma.user.findUnique({
           where: { id: token.userId },

@@ -17,7 +17,6 @@ export async function POST(request: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(bodyData, signature, endPointSecret);
-  
 
     switch (event.type) {
       case "checkout.session.completed":
@@ -27,7 +26,6 @@ export async function POST(request: Request) {
         console.log(`Unhandled event type ${event.type}`);
     }
   } catch (error) {
-    console.log("Webhook verification failed", error);
     return Response.json(null, { status: 400 });
   }
 
