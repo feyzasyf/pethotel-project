@@ -26,8 +26,15 @@ function Payment({
       return;
     }
 
+    let attempts = 0;
+
     const interval = setInterval(async () => {
+      attempts++;
       await update({ forceRefresh: true });
+
+      if (attempts >= 5) {
+        clearInterval(interval);
+      }
     }, 2000);
     return () => clearInterval(interval);
   }, [success, session, update, router]);
