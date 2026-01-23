@@ -15,7 +15,6 @@ import { stripe } from "./lib/stripe";
 
 //--- user actions ----
 export async function logOut() {
-  await sleep(1000);
   await signOut({ redirectTo: "/" });
 }
 
@@ -73,7 +72,7 @@ export async function logIn(formData: unknown) {
   }
 
   const validatedFormData = authSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!validatedFormData.success) {
@@ -104,8 +103,6 @@ export async function logIn(formData: unknown) {
 
 //----pet actions ----
 export async function addPet(pet: unknown): Promise<ActionResult<null>> {
-  await sleep(1000);
-
   const session = await auth();
 
   if (!session?.user) {
@@ -134,10 +131,8 @@ export async function addPet(pet: unknown): Promise<ActionResult<null>> {
 
 export async function editPet(
   newPet: unknown,
-  id: unknown
+  id: unknown,
 ): Promise<ActionResult<null>> {
-  await sleep(1000);
-
   //authentication check
   const session = await checkAuth();
 
@@ -170,8 +165,6 @@ export async function editPet(
 }
 
 export async function checkoutPet(petId: unknown) {
-  await sleep(1000);
-
   //authentication check
   const session = await auth();
   if (!session?.user) {
