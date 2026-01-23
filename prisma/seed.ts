@@ -1,9 +1,8 @@
-import { PrismaClient, Prisma } from "../app/generated/prisma/client";
+import prisma from "../lib/prisma";
+
 import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient({});
-
-const userData: Prisma.UserCreateInput = {
+const userData = {
   email: "example@gmail.com",
   hashedPassword: "",
   pets: {

@@ -1,5 +1,7 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "../app/generated/prisma/client";
 
 export function isUniqueConstraintError(err: unknown) {
-  return err instanceof PrismaClientKnownRequestError && err.code === "P2002";
+  return (
+    err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002"
+  );
 }
