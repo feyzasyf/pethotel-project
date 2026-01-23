@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { use, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { fail } from "@/lib/utils";
+import { checkAuth } from "@/lib/serverUtils";
+import { toast } from "sonner";
 
 function Payment({
   searchParams,
@@ -39,6 +42,18 @@ function Payment({
     return () => clearInterval(interval);
   }, [success, session, update, router]);
 
+  async function handleCheckout() {
+    setIsPending(true);
+
+    const url = await createCheckoutSession();
+
+    if (url) {
+      router.push(url);
+    } else {
+      toast.error("User email not found");
+      router.push("/payment");
+    }
+  }
   return (
     <main className="flex flex-col items-center space-y-10">
       <Heading>PetHotel access requires payment</Heading>
@@ -46,8 +61,7 @@ function Payment({
         <Button
           disabled={isPending}
           onClick={() => {
-            setIsPending(true);
-            createCheckoutSession();
+            handleCheckout();
           }}
         >
           Buy lifetime access for $299

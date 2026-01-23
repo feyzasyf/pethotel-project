@@ -2,7 +2,7 @@
 
 import prisma from "./lib/prisma";
 import { revalidatePath } from "next/cache";
-import { fail, ok, sleep } from "./lib/utils";
+import { fail, ok } from "./lib/utils";
 import { ActionResult } from "./lib/types";
 import { authSchema, petFormSchema, petIdSchema } from "./lib/validations";
 import { auth, signIn, signOut } from "./lib/auth";
@@ -203,14 +203,14 @@ export async function checkoutPet(petId: unknown) {
 //payment action
 export async function createCheckoutSession() {
   const session = await checkAuth();
-  if (!session.user.email) {
-    return fail("User email not found");
+  const { email, id } = session.user;
+  if (!email) {
+    return null;
   }
-
   const checkoutSession = await stripe.checkout.sessions.create({
-    customer_email: session.user.email,
+    customer_email: email,
     metadata: {
-      userId: session.user.id,
+      userId: id,
     },
     line_items: [
       {
@@ -222,8 +222,5 @@ export async function createCheckoutSession() {
     success_url: `${process.env.BASE_URL}/payment?success=true`,
     cancel_url: `${process.env.BASE_URL}/payment?canceled=true`,
   });
-  if (!checkoutSession.url) {
-    redirect("/payment");
-  }
-  redirect(checkoutSession.url);
+  return checkoutSession.url;
 }
