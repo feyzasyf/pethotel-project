@@ -1,7 +1,7 @@
 "use client";
 
 import { usePetContext } from "@/lib/hooks";
-import { Pet } from "@/app/generated/prisma/client";
+import { Pet } from "@prisma/client";
 import Image from "next/image";
 import PetButton from "./PetButton";
 import { AddEditPet } from "./AddEditPet";

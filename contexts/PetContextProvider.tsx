@@ -2,7 +2,7 @@
 
 import { addPet, checkoutPet, editPet } from "@/actions";
 import { ActionResult, PetEssentials } from "@/lib/types";
-import { Pet } from "@/app/generated/prisma/client";
+import { Pet } from "@prisma/client";
 import { createContext, startTransition, useOptimistic, useState } from "react";
 
 type PetContextProviderProps = {
@@ -17,7 +17,7 @@ type TPetContext = {
   handleAddPet: (newPet: PetEssentials) => Promise<ActionResult<null>>;
   handleEditPet: (
     petId: Pet["id"],
-    updatedPet: PetEssentials
+    updatedPet: PetEssentials,
   ) => Promise<ActionResult<null>>;
   handleCheckoutPet: (id: Pet["id"]) => Promise<void>;
   selectedPet: Pet | undefined;
@@ -37,14 +37,14 @@ export default function PetContextProvider({
           return [...state, payload];
         case "edit":
           return state.map((pet) =>
-            pet.id === payload.id ? { ...pet, ...payload.updatedPet } : pet
+            pet.id === payload.id ? { ...pet, ...payload.updatedPet } : pet,
           );
         case "delete":
           return state.filter((pet) => pet.id !== payload);
         default:
           return state;
       }
-    }
+    },
   );
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 

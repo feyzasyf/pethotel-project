@@ -2,7 +2,7 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { AddEditAction } from "@/lib/types";
-import { Pet } from "@/app/generated/prisma/client";
+import { Pet } from "@prisma/client";
 import PetFormBtn from "./PetFormBtn";
 import { toast } from "sonner";
 import { usePetContext } from "@/lib/hooks";

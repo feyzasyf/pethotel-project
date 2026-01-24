@@ -1,5 +1,5 @@
 import { Session } from "next-auth";
-import type { Pet } from "../app/generated/prisma/client";
+import type { Pet } from "@prisma/client";
 
 export type PetEssentials = Omit<
   Pet,

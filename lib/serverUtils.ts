@@ -2,7 +2,7 @@ import "server-only";
 
 import { auth } from "./auth";
 import { assertIsAuthenticated } from "./guards";
-import { Pet, User } from "@/app/generated/prisma/client";
+import { Pet, User } from "@prisma/client";
 import prisma from "./prisma";
 
 export async function checkAuth() {
