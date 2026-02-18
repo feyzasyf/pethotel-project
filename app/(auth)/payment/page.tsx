@@ -2,82 +2,28 @@
 import { createCheckoutSession } from "@/actions";
 import Heading from "@/components/Heading";
 import { Button } from "@/components/ui/button";
-import { use, useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { fail } from "@/lib/utils";
-import { checkAuth } from "@/lib/serverUtils";
-import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { useFormStatus } from "react-dom";
 
-function Payment({
-  searchParams,
-}: {
-  searchParams: Promise<{ success?: string; cancelled?: string }>;
-}) {
-  const { success, cancelled } = use(searchParams);
+function Payment() {
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+  const cancelled = searchParams.get("cancelled");
 
-  const router = useRouter();
-  const { data: session, update, status } = useSession();
+  const { pending } = useFormStatus();
 
-  const [isPending, setIsPending] = useState(false);
-
-  useEffect(() => {
-    if (!success) return;
-
-    if (session?.user?.hasAccess) {
-      router.push("/app/dashboard");
-      return;
-    }
-
-    let attempts = 0;
-
-    const interval = setInterval(async () => {
-      attempts++;
-      await update({ forceRefresh: true });
-
-      if (attempts >= 5) {
-        clearInterval(interval);
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [success, session, update, router]);
-
-  async function handleCheckout() {
-    setIsPending(true);
-
-    const url = await createCheckoutSession();
-
-    if (url) {
-      router.push(url);
-    } else {
-      toast.error("User email not found");
-      router.push("/payment");
-    }
-  }
   return (
     <main className="flex flex-col items-center space-y-10">
       <Heading>PetHotel access requires payment</Heading>
       {!success && (
-        <Button
-          disabled={isPending}
-          onClick={() => {
-            handleCheckout();
-          }}
-        >
-          Buy lifetime access for $299
-        </Button>
+        <form action={createCheckoutSession}>
+          <Button disabled={pending} type="submit">
+            Buy lifetime access for $299
+          </Button>
+        </form>
       )}
       {success && (
         <>
-          {/* <Button
-            disabled={status === "loading"}
-            onClick={async () => {
-              await update({ forceRefresh: true });
-              router.push("/app/dashboard");
-            }}
-          >
-            Access PetHotel
-          </Button> */}
           <p className="text-sm text-green-700">
             Payment successful 🎉 We’re finalizing your access. This may take a
             few seconds.
