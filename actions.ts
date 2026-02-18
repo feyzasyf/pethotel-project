@@ -53,7 +53,7 @@ export async function signUp(formData: unknown) {
     email: email,
     password: password,
   });
-  redirect("/app/dashboard");
+  redirect("/payment");
 }
 
 export async function authAction(prevState: unknown, formData: FormData) {
@@ -205,22 +205,23 @@ export async function createCheckoutSession() {
   const session = await checkAuth();
   const { email, id } = session.user;
   if (!email) {
-    return null;
+    redirect("/payment");
   }
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer_email: email,
-    metadata: {
-      userId: id,
-    },
-    line_items: [
-      {
-        price: process.env.PRICE_ID,
-        quantity: 1,
-      },
-    ],
-    mode: "payment",
-    success_url: `${process.env.BASE_URL}/payment?success=true`,
-    cancel_url: `${process.env.BASE_URL}/payment?canceled=true`,
-  });
-  return checkoutSession.url;
+  let checkoutSession = null;
+  try {
+    checkoutSession = await stripe.checkout.sessions.create({
+      customer_email: email,
+      metadata: { userId: id },
+      line_items: [{ price: process.env.PRICE_ID, quantity: 1 }],
+      mode: "payment",
+      success_url: `${process.env.BASE_URL}/payment?success=true`,
+      cancel_url: `${process.env.BASE_URL}/payment?canceled=true`,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  if (!checkoutSession?.url) {
+    redirect("/payment");
+  }
+  redirect(checkoutSession.url!);
 }
