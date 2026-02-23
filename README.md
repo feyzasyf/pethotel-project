@@ -1,9 +1,9 @@
-🐾 PetHotel – Full-Stack Booking Platform
-Live Demo: https://pethotel-project.vercel.app
-PetHotel is a full-stack booking platform where users can list pets for boarding and manage reservations with secure Stripe payments.
+# 🐾 PetHotel – Full-Stack Booking Platform        
+Live Demo: [https://pethotel-project.vercel.app]([https://pethotel-project.vercel.app)            
+PetHotel is a full-stack booking platform where users can list pets for boarding and manage reservations with secure Stripe payments.          
 Built with modern production-ready tools and deployed on Vercel.
 
-# ✨ **Features**     
+## ✨ **Features**     
 User authentication    
 Pet listing creation      
 Reservation & booking system       
@@ -13,7 +13,7 @@ Production deployment on Vercel
 Note: Image uploads are currently disabled in production (no external object storage configured yet).
 
 
-# 🛠  **Tech Stack**        
+## 🛠  **Tech Stack**        
 - Next.js (App Router) v16+           
 - React + TypeScript           
 - NextAuth v5  
@@ -24,7 +24,7 @@ Note: Image uploads are currently disabled in production (no external object sto
 - Vercel (serverless)            
 
 
-#Project Structure
+## Project Structure
 
 ```
 app/
